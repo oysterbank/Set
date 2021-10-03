@@ -16,31 +16,33 @@ struct SetGameView: View {
                 .font(.largeTitle)
                 .padding(.top)
                 .foregroundColor(Color.green)
-            Spacer()
-            AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
+            Button(action: game.startNewGame, label: {
+                Text("New Game")
+            })
+            .padding()
+            AspectVGrid(items: game.visibleCards, aspectRatio: 2/3) { card in
                 cardView(for: card)
             }
             .foregroundColor(Color.green)
             .padding(.horizontal)
-//            Spacer()
-//            HStack {
-//                Text("Score: \(game.score)")
-//                Spacer()
-//                Button(action: game.startNewGame, label: {
-//                    Text("New Game")
-//                })
-//            }
-//            .padding([.top, .leading, .trailing])
+            Button(action: game.dealThreeCards, label: {
+                Text("Deal 3 Cards")
+            })
+            .padding()
         }
     }
     
     @ViewBuilder
     private func cardView(for card: SetGameViewModel.Card) -> some View {
-        CardView(card: card)
-            .padding(4)
-//            .onTapGesture {
-//                game.choose(card)
-//            }
+        if card.isMatched {
+            Rectangle().opacity(0)
+        } else {
+            CardView(card: card)
+                .padding(4)
+                .onTapGesture {
+                    game.choose(card)
+                }
+        }
     }
 }
 
@@ -50,17 +52,15 @@ struct CardView: View {
         GeometryReader { geometry in
             ZStack {
                 let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-//                if card.isFaceUp {
-//                    shape.fill().foregroundColor(.white)
-//                    shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                if card.isMatched {
+                    shape.opacity(0)
+                } else {
+                    shape.fill().foregroundColor(.white)
+                    shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
 //                    Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 110-90))
 //                        .padding(5).opacity(0.5)
 //                    Text(card.content).font(font(in: geometry.size))
-//                } else if card.isMatched {
-//                    shape.opacity(0)
-//                } else {
-                    shape.fill()
-//                }
+                }
             }
         }
     }

@@ -33,10 +33,34 @@ class SetGameViewModel: ObservableObject {
         return createdCardContents
     }
     
-    @Published private var model = SetGame<SetCardContent>(setCardContent: createCardContent())
+    private static func createSetGame() -> SetGame<SetCardContent> {
+        return SetGame<SetCardContent>(setCardContent: createCardContent())
+    }
     
-    var cards: Array<Card> {
-        model.cards
+    
+    @Published private var model: SetGame<SetCardContent>
+    
+    init() {
+        self.model = SetGameViewModel.createSetGame()
+    }
+    
+    var visibleCards: Array<Card> {
+        model.visibleCards
+    }
+    
+    
+    // MARK: - Intent(s)
+    
+    func choose(_ card: Card) {
+        model.choose(card)
+    }
+    
+    func startNewGame() {
+        self.model = SetGameViewModel.createSetGame()
+    }
+    
+    func dealThreeCards() {
+        model.dealCards(3)
     }
 }
 
