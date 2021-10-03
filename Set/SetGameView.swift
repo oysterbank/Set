@@ -14,8 +14,9 @@ struct SetGameView: View {
         VStack {
             Text("Set!")
                 .font(.largeTitle)
+                .fontWeight(.bold)
                 .padding(.top)
-                .foregroundColor(Color.green)
+                .foregroundColor(Color.orange)
             Button(action: game.startNewGame, label: {
                 Text("New Game")
             })
@@ -23,7 +24,6 @@ struct SetGameView: View {
             AspectVGrid(items: game.visibleCards, aspectRatio: 2/3) { card in
                 cardView(for: card)
             }
-            .foregroundColor(Color.green)
             .padding(.horizontal)
             Button(action: game.dealThreeCards, label: {
                 Text("Deal 3 Cards")
@@ -37,11 +37,13 @@ struct SetGameView: View {
         if card.isMatched {
             Rectangle().opacity(0)
         } else {
+            let borderColor = card.isSelected ? Color.blue : Color.black
             CardView(card: card)
                 .padding(4)
                 .onTapGesture {
                     game.choose(card)
                 }
+                .foregroundColor(borderColor)
         }
     }
 }
