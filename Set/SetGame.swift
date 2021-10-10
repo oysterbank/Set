@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SetGame<CardContent> where CardContent: Equatable {
+struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: Equatable, CardColor: Equatable, CardPattern: Equatable, ShapeCount: Equatable {
     private(set) var deck: Array<Card>
     private(set) var visibleCards: Array<Card>
     
@@ -32,13 +32,13 @@ struct SetGame<CardContent> where CardContent: Equatable {
         }
     }
     
-    init(setCardContent: Array<CardContent>) {
+    init(setCardContent: Array<(CardShape, CardColor, CardPattern, ShapeCount)>) {
         deck = []
         visibleCards = []
         
         // Build the deck of 81 cards and shuffle it
         for (index, card) in setCardContent.enumerated() {
-            deck.append(Card(id: index, content: card))
+            deck.append(Card(id: index, shape: card.0, color: card.1, pattern: card.2, numberOfShapes: card.3))
         }
         deck.shuffle()
         
@@ -47,9 +47,13 @@ struct SetGame<CardContent> where CardContent: Equatable {
     }
     
     struct Card: Identifiable {
-        var id: Int
+        let id: Int
+        let shape: CardShape
+        let color: CardColor
+        let pattern: CardPattern
+        let numberOfShapes: ShapeCount
+        
         var isSelected = false
         var isMatched = false
-        let content: CardContent
     }
 }

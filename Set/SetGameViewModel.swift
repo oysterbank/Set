@@ -8,23 +8,32 @@
 import SwiftUI
 
 class SetGameViewModel: ObservableObject {
-    typealias Card = SetGame<SetCardContent>.Card
+    enum CardShape: CaseIterable {
+        case oval, diamond, squiggle
+    }
     
-    private static func createCardContent() -> Array<SetCardContent> {
-        let shapes = ["diamond", "oval", "triangle"]
-        let numbersOfShapes = [1, 2, 3]
-        let colors = ["red", "green", "purple"]
-        let patterns = ["solid", "striped", "open"]
+    enum CardColor: CaseIterable {
+        case red, green, purple
+    }
+    
+    enum CardPattern: CaseIterable {
+        case open, solid, striped
+    }
+    
+    enum ShapeCount: Int, CaseIterable {
+        case one = 1, two, three
+    }
+
+    typealias Card = SetGame<CardShape, CardColor, CardPattern, ShapeCount>.Card
+    
+    private static func createCardContent() -> Array<(CardShape, CardColor, CardPattern, ShapeCount)> {
+        var createdCardContents: Array<(CardShape, CardColor, CardPattern, ShapeCount)> = []
         
-        var createdCardContents: Array<SetCardContent> = []
-        
-        for shape in shapes {
-            for number in numbersOfShapes {
-                for color in colors {
-                    for pattern in patterns {
-                        createdCardContents.append(
-                            SetCardContent(shape: shape, numberOfShapes: number, color: color, pattern: pattern)
-                        )
+        for shape in CardShape.allCases {
+            for number in ShapeCount.allCases {
+                for color in CardColor.allCases {
+                    for pattern in CardPattern.allCases {
+                        createdCardContents.append((shape, color, pattern, number))
                     }
                 }
             }
@@ -33,12 +42,12 @@ class SetGameViewModel: ObservableObject {
         return createdCardContents
     }
     
-    private static func createSetGame() -> SetGame<SetCardContent> {
-        return SetGame<SetCardContent>(setCardContent: createCardContent())
+    private static func createSetGame() -> SetGame<CardShape, CardColor, CardPattern, ShapeCount> {
+        return SetGame<CardShape, CardColor, CardPattern, ShapeCount>(setCardContent: createCardContent())
     }
     
     
-    @Published private var model: SetGame<SetCardContent>
+    @Published private var model: SetGame<CardShape, CardColor, CardPattern, ShapeCount>
     
     init() {
         self.model = SetGameViewModel.createSetGame()
@@ -46,6 +55,17 @@ class SetGameViewModel: ObservableObject {
     
     var visibleCards: Array<Card> {
         model.visibleCards
+    }
+    
+    static func getCardColor(_ color: CardColor) -> Color {
+        switch color {
+        case .red:
+            return Color.red
+        case .purple:
+            return Color.purple
+        case .green:
+            return Color.green
+        }
     }
     
     
@@ -62,11 +82,4 @@ class SetGameViewModel: ObservableObject {
     func dealThreeCards() {
         model.dealCards(3)
     }
-}
-
-struct SetCardContent: Equatable {
-    var shape: String
-    var numberOfShapes: Int
-    var color: String
-    var pattern: String
 }
