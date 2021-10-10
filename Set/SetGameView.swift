@@ -61,7 +61,21 @@ struct CardView: View {
                     shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
 //                    Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 110-90))
 //                        .padding(5).opacity(0.5)
-//                    Text(card.content).font(font(in: geometry.size))
+                    
+                    let cardContent = card.content
+                    let numberOfShapes: Int = cardContent.numberOfShapes
+                    let cardHeight: CGFloat = geometry.size.height
+                    let heightMultiplyer: Double = pow(3.5, Double(numberOfShapes))
+                    
+                    VStack {
+                        Spacer(minLength: (cardHeight / CGFloat(heightMultiplyer)))
+                        ForEach(0..<numberOfShapes) {_ in
+                            cardShape(cardContent.shape)
+                                .font(font(in: geometry.size))
+                                .foregroundColor(cardColor(cardContent.color))
+                        }
+                        Spacer(minLength: (cardHeight / CGFloat(heightMultiplyer)))
+                    }.padding(cardHeight / 10)
                 }
             }
         }
@@ -69,6 +83,31 @@ struct CardView: View {
     
     private func font(in size: CGSize) -> Font {
         Font.system(size: min(size.width, size.height) * DrawingConstants.fontScale)
+    }
+    
+    @ViewBuilder
+    private func cardShape(_ shape: String) -> some View {
+        switch shape {
+        case "oval":
+            Capsule()
+        case "diamond":
+            Rectangle()
+        case "triangle":
+            Ellipse()
+        default:
+            Spacer()
+        }
+    }
+    
+    private func cardColor(_ color: String) -> Color {
+        switch color {
+        case "red":
+            return Color.red
+        case "purple":
+            return Color.purple
+        default:
+            return Color.green
+        }
     }
     
     private struct DrawingConstants {
