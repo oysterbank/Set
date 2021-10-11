@@ -16,8 +16,8 @@ class SetGameViewModel: ObservableObject {
         case red, green, purple
     }
     
-    enum CardPattern: CaseIterable {
-        case open, solid, striped
+    enum CardPattern: Double, CaseIterable {
+        case open = 0, solid = 1, striped = 0.5
     }
     
     enum ShapeCount: Int, CaseIterable {

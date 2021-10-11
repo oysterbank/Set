@@ -62,27 +62,49 @@ struct CardView: View {
                     
                     let color: Color = SetGameViewModel.getCardColor(card.color)
                     let numberOfShapes: Int = card.numberOfShapes.rawValue
-//                    let pattern = card.pattern
+                    let pattern: Double = card.pattern.rawValue
                     
                     VStack {
                         switch card.shape {
                         case .oval:
                             ForEach(0..<numberOfShapes) {_ in
-                                Capsule()
-                                    .stroke(color)
+                                Capsule(style: .circular)
+                                    .stroke(color, lineWidth: 4)
+                                    .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: min(geometry.size.width, geometry.size.height) / 2)
+                                    .overlay(
+                                        Capsule(style: .circular)
+                                            .fill(pattern != 0 ? color : Color.white)
+                                            .opacity(pattern))
+                                    .frame(idealWidth: geometry.size.width, idealHeight: geometry.size.width / 3 )
                             }
+                            .frame(idealWidth: geometry.size.width)
                         case .diamond:
                             ForEach(0..<numberOfShapes) {_ in
                                 Diamond()
-                                    .stroke(color)
+                                    .stroke(color, lineWidth: 4)
+                                    .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: min(geometry.size.width, geometry.size.height) / 2)
+                                    .overlay(
+                                        Diamond()
+                                            .fill(pattern != 0 ? color : Color.white)
+                                            .opacity(pattern))
+                                    .frame(idealWidth: geometry.size.width, idealHeight: geometry.size.width / 3 )
                             }
+                            .frame(idealWidth: geometry.size.width)
                         case .squiggle:
                             ForEach(0..<numberOfShapes) {_ in
                                 Rectangle()
-                                    .stroke(color)
+                                    .stroke(color, lineWidth: 4)
+                                    .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: min(geometry.size.width,geometry.size.height) / 2 )
+                                    .overlay(
+                                        Rectangle()
+                                            .fill(pattern != 0 ? color : Color.white)
+                                            .opacity(pattern))
+                                    .frame(idealWidth: geometry.size.width, idealHeight: geometry.size.width / 3 )
                             }
+                            .frame(idealWidth: geometry.size.width)
                         }
-                    }.padding()
+                    }
+                    .padding(14)
                 }
             }
         }
