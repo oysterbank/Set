@@ -37,7 +37,7 @@ struct SetGameView: View {
         if card.isMatched {
             Rectangle().opacity(0)
         } else {
-            let borderColor = card.isSelected ? Color.blue : Color.black
+            let borderColor = game.cardIsSelected(card) ? Color.blue : Color.black
             CardView(card: card)
                 .padding(4)
                 .onTapGesture {
