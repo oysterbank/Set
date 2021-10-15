@@ -72,6 +72,9 @@ class SetGameViewModel: ObservableObject {
         model.cardIsSelected(card)
     }
     
+    func cardIsMatched(_ card: Card) -> Bool {
+        model.cardIsMatched(card)
+    }
     
     // MARK: - Intent(s)
     
