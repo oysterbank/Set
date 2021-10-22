@@ -46,6 +46,8 @@ struct SetGameView: View {
     private func getBorderColor(_ card: SetGameViewModel.Card) -> Color {
         var borderColor = Color.black
         if game.cardIsMatched(card) {
+            borderColor = Color.green
+        } else if game.cardIsSelected(card) && game.selectedCards.count == 3 {
             borderColor = Color.red
         } else if game.cardIsSelected(card) {
             borderColor = Color.blue

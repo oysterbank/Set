@@ -57,6 +57,10 @@ class SetGameViewModel: ObservableObject {
         model.visibleCards
     }
     
+    var selectedCards: Array<Card> {
+        model.selectedCards
+    }
+    
     static func getCardColor(_ color: CardColor) -> Color {
         switch color {
         case .red:
