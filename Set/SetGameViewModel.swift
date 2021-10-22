@@ -72,6 +72,13 @@ class SetGameViewModel: ObservableObject {
         }
     }
     
+    var deckIsEmpty: Bool {
+        if model.deck.count == 0 {
+            return true
+        }
+        return false
+    }
+    
     func cardIsSelected(_ card: Card) -> Bool {
         model.cardIsSelected(card)
     }
@@ -91,6 +98,9 @@ class SetGameViewModel: ObservableObject {
     }
     
     func dealThreeCards() {
+        if model.cardsAreMatched() {
+            model.removeMatchedCards()
+        }
         model.dealCards(3)
     }
 }

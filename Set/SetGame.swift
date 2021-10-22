@@ -17,22 +17,36 @@ struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: E
         if let _ = visibleCards.firstIndex(where: { $0.id == card.id })
         {
             // Is the card already selected?
-            if let selectedIndex = selectedCards.firstIndex(where: { $0.id == card.id }) {
-                // Deselect the card if less than 3
-                if selectedCards.count < 3 {
-                    selectedCards.remove(at: selectedIndex)
-                }
+            if let selectedIndex = selectedCards.firstIndex(where: { $0.id == card.id }),
+               selectedCards.count < 3 {
+                // Deselect the card
+                selectedCards.remove(at: selectedIndex)
             } else {
                 // Are there already three 3 cards selected?
-                if selectedCards.count < 3 {
+                if selectedCards.count < 4 {
                     // No, select the card.
                     selectedCards.append(card)
                 }
                 
-                if selectedCards.count == 3 {
-                    // Yes, determine if there is a match.
+                // Ok, we either selected a card or already had 3 cards.
+                // Either way, if we have 3 now, determine if there is a match.
+                if selectedCards.count == 3, cardsAreMatched() {
+                    matchedCards = selectedCards
+                }
+                
+                if selectedCards.count == 4 {
                     if cardsAreMatched() {
-                        matchedCards = selectedCards
+                        removeMatchedCards()
+                        // Select if still visible (not one of the matched cards)
+                        if visibleCards.firstIndex(where: { $0.id == card.id }) != nil
+                        {
+                            selectedCards.append(card)
+                        }
+                        dealCards(3)
+                    } else {
+                        // Deselect the 3 previously selected cards and select the new one
+                        selectedCards = []
+                        selectedCards.append(card)
                     }
                 }
             }
@@ -50,6 +64,17 @@ struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: E
                 visibleCards.append(cardToAdd)
             }
         }
+    }
+    
+    mutating func removeMatchedCards() {
+        for matchedCard in matchedCards {
+            if let matchedIndex = visibleCards.firstIndex(where: { $0.id == matchedCard.id })
+            {
+                visibleCards.remove(at: matchedIndex)
+            }
+        }
+        matchedCards = []
+        selectedCards = []
     }
     
     func cardIsSelected(_ card: Card) -> Bool {

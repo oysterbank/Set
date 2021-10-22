@@ -29,6 +29,7 @@ struct SetGameView: View {
                 Text("Deal 3 Cards")
             })
             .padding()
+            .disabled(game.deckIsEmpty)
         }
     }
     
