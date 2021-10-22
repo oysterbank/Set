@@ -100,9 +100,38 @@ struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: E
             return false
         }
         
-        // Logic for determining match based on 3 selected cards goes here
-        // For now, just return true
-        return true
+        if colorMatch() && numberOfShapeMatch() && patternMatch() && shapeMatch() {
+            return true
+        }
+        return false
+    }
+    
+    private func colorMatch() -> Bool {
+        if (selectedCards[0].color != selectedCards[1].color && selectedCards[1].color != selectedCards[2].color) || (selectedCards[0].color == selectedCards[1].color && selectedCards[1].color == selectedCards[2].color) {
+            return true
+        }
+        return false
+    }
+    
+    private func numberOfShapeMatch() -> Bool {
+        if (selectedCards[0].numberOfShapes != selectedCards[1].numberOfShapes && selectedCards[1].numberOfShapes != selectedCards[2].numberOfShapes) || (selectedCards[0].numberOfShapes == selectedCards[1].numberOfShapes && selectedCards[1].numberOfShapes == selectedCards[2].numberOfShapes) {
+            return true
+        }
+        return false
+    }
+    
+    private func patternMatch() -> Bool {
+        if (selectedCards[0].pattern != selectedCards[1].pattern && selectedCards[1].pattern != selectedCards[2].pattern) || (selectedCards[0].pattern == selectedCards[1].pattern && selectedCards[1].pattern == selectedCards[2].pattern) {
+            return true
+        }
+        return false
+    }
+    
+    private func shapeMatch() -> Bool {
+        if (selectedCards[0].shape != selectedCards[1].shape && selectedCards[1].shape != selectedCards[2].shape) || (selectedCards[0].shape == selectedCards[1].shape && selectedCards[1].shape == selectedCards[2].shape) {
+            return true
+        }
+        return false
     }
     
     init(setCardContent: Array<(CardShape, CardColor, CardPattern, ShapeCount)>) {
