@@ -13,24 +13,40 @@ struct SetGameView: View {
     var body: some View {
         VStack {
             Text("Set!")
-                .font(.largeTitle)
+                .font(.title)
                 .fontWeight(.bold)
-                .padding(.top)
                 .foregroundColor(Color.orange)
-            Button(action: game.startNewGame, label: {
-                Text("New Game")
-            })
-            .padding()
             AspectVGrid(items: game.visibleCards, aspectRatio: 2/3) { card in
                 cardView(for: card)
             }
             .padding(.horizontal)
-            Button(action: game.dealThreeCards, label: {
-                Text("Deal 3 Cards")
-            })
-            .padding()
-            .disabled(game.deckIsEmpty)
+            HStack {
+                Spacer()
+                newGame
+                Spacer()
+                dealThreeCards
+                Spacer()
+            }
         }
+    }
+    
+    var newGame: some View {
+        Button("New Game") {
+            withAnimation {
+                game.startNewGame()
+            }
+        }
+        .buttonStyle(.bordered)
+    }
+    
+    var dealThreeCards: some View {
+        Button("Deal 3 Cards") {
+            withAnimation {
+                game.dealThreeCards()
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(game.deckIsEmpty)
     }
     
     @ViewBuilder
@@ -46,11 +62,11 @@ struct SetGameView: View {
     
     private func getBorderColor(_ card: SetGameViewModel.Card) -> Color {
         var borderColor = Color.black
-        if game.cardIsMatched(card) {
+        if game.cardIsMatched(cardId: card.id) {
             borderColor = Color.green
-        } else if game.cardIsSelected(card) && game.selectedCards.count == 3 {
+        } else if game.cardIsSelected(cardId: card.id) && game.selectedCards.count == 3 {
             borderColor = Color.red
-        } else if game.cardIsSelected(card) {
+        } else if game.cardIsSelected(cardId: card.id) {
             borderColor = Color.blue
         }
         return borderColor

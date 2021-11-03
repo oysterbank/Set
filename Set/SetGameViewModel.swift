@@ -46,7 +46,6 @@ class SetGameViewModel: ObservableObject {
         return SetGame<CardShape, CardColor, CardPattern, ShapeCount>(setCardContent: createCardContent())
     }
     
-    
     @Published private var model: SetGame<CardShape, CardColor, CardPattern, ShapeCount>
     
     init() {
@@ -54,10 +53,11 @@ class SetGameViewModel: ObservableObject {
     }
     
     var visibleCards: Array<Card> {
-        model.visibleCards
+        let visibleCards = model.allCards.filter { model.visibleCards.contains($0.id) }
+        return visibleCards
     }
     
-    var selectedCards: Array<Card> {
+    var selectedCards: Set<Int> {
         model.selectedCards
     }
     
@@ -73,18 +73,15 @@ class SetGameViewModel: ObservableObject {
     }
     
     var deckIsEmpty: Bool {
-        if model.deck.count == 0 {
-            return true
-        }
-        return false
+        model.deck.isEmpty
     }
     
-    func cardIsSelected(_ card: Card) -> Bool {
-        model.cardIsSelected(card)
+    func cardIsSelected(cardId: Int) -> Bool {
+        model.cardIsSelected(cardId: cardId)
     }
     
-    func cardIsMatched(_ card: Card) -> Bool {
-        model.cardIsMatched(card)
+    func cardIsMatched(cardId: Int) -> Bool {
+        model.cardIsMatched(cardId: cardId)
     }
     
     // MARK: - Intent(s)
