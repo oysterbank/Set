@@ -8,82 +8,102 @@
 import Foundation
 
 struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: Hashable, CardColor: Hashable, CardPattern: Hashable, ShapeCount: Hashable {
-    private(set) var allCards: Array<Card>
-    private(set) var deck: Set<Int>
-    private(set) var discardPile: Set<Int>
-    private(set) var visibleCards: Set<Int>
-    private(set) var selectedCards: Set<Int>
-    private(set) var matchedCards: Set<Int>
+    private(set) var cards: Array<Card>
+//    private(set) var deck: Set<Int>
+//    private(set) var discardPile: Set<Int>
+//    var dealt: Set<Int>
+//    private(set) var selectedCards: Set<Int>
+//    private(set) var matchedCards: Set<Int>
     
     mutating func choose(_ card: Card) {
-        if let _ = visibleCards.firstIndex(where: { $0 == card.id })
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id })
         {
             // Is the card already selected?
-            if let selectedIndex = selectedCards.firstIndex(where: { $0 == card.id }),
+            if card.isSelected,
                selectedCards.count < 3 {
                 // Deselect the card
-                selectedCards.remove(at: selectedIndex)
+                cards[chosenIndex].isSelected = false
             } else {
                 
                 // Are there already three 3 cards selected?
                 if selectedCards.count < 4 {
                     // No, select the card.
-                    selectedCards.insert(card.id)
+                    cards[chosenIndex].isSelected = true
                 }
                 
                 // Ok, we either selected a card or already had 3 cards.
                 // Either way, if we have 3 now, determine if there is a match.
                 if selectedCards.count == 3, cardsAreMatched() {
-                    matchedCards = selectedCards
+                    for card in selectedCards {
+                        matchCard(card)
+                    }
                 }
                 
                 if selectedCards.count == 4 {
                     if cardsAreMatched() {
-                        removeMatchedCards()
+//                        removeMatchedCards()
                         // Select if still visible (not one of the matched cards)
-                        if visibleCards.firstIndex(where: { $0 == card.id }) != nil
+                        if cards.firstIndex(where: { $0.id == card.id }) != nil
                         {
-                            selectedCards.insert(card.id)
+                            cards[chosenIndex].isSelected = true
                         }
-                        dealCards(3)
+//                        dealCards(3)
                     } else {
                         // Deselect the 3 previously selected cards and select the new one
-                        selectedCards = []
-                        selectedCards.insert(card.id)
+                        for card in selectedCards {
+                            deSelectCard(card)
+                        }
+                        cards[chosenIndex].isSelected = true
                     }
                 }
             }
         }
     }
     
-    mutating func dealCards(_ numberOfCards: Int) {
-        // If there are fewer cards in the deck than numberOfCards, set
-        // cardsToDeal to the count of the deck
-        let cardsToDeal = deck.count < numberOfCards ? deck.count : numberOfCards
-        
-        // Draw cards from deck and add to our visible cards
-        for _ in 0..<cardsToDeal {
-            if let cardToAdd = deck.popFirst() {
-                visibleCards.insert(cardToAdd)
-            }
+    private mutating func matchCard(_ card: Card) {
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }) {
+            cards[chosenIndex].isMatched = true
         }
     }
     
-    mutating func removeMatchedCards() {
-        // After cards are matched, they're removed from the set of visible cards.
-        // This means there are also no longer any matched or selected cards.
-        visibleCards.subtract(matchedCards)
-        matchedCards.removeAll()
-        selectedCards.removeAll()
+    private mutating func deSelectCard(_ card: Card) {
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }) {
+            cards[chosenIndex].isSelected = false
+        }
     }
     
-    func cardIsSelected(cardId: Int) -> Bool {
-        selectedCards.contains(cardId)
+    private var selectedCards: Array<Card> {
+        cards.filter { $0.isSelected == true }
     }
     
-    func cardIsMatched(cardId: Int) -> Bool {
-        matchedCards.contains(cardId)
-    }
+//    mutating func dealCards(_ numberOfCards: Int) {
+//        // If there are fewer cards in the deck than numberOfCards, set
+//        // cardsToDeal to the count of the deck
+//        let cardsToDeal = deck.count < numberOfCards ? deck.count : numberOfCards
+//
+//        // Draw cards from deck and add to our visible cards
+//        for _ in 0..<cardsToDeal {
+//            if let cardToAdd = deck.popFirst() {
+//                dealt.insert(cardToAdd)
+//            }
+//        }
+//    }
+    
+//    mutating func removeMatchedCards() {
+//        // After cards are matched, they're removed from the set of visible cards.
+//        // This means there are also no longer any matched or selected cards.
+////        dealt.subtract(matchedCards)
+//        matchedCards.removeAll()
+//        selectedCards.removeAll()
+//    }
+    
+//    func cardIsSelected(cardId: Int) -> Bool {
+//        selectedCards.contains(cardId)
+//    }
+//
+//    func cardIsMatched(cardId: Int) -> Bool {
+//        matchedCards.contains(cardId)
+//    }
     
     func cardsAreMatched() -> Bool {
         // This method should only be called if there are at least 3 cards
@@ -92,8 +112,7 @@ struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: H
             return false
         }
         
-        let cards = allCards.filter { selectedCards.contains($0.id) }
-        if colorMatch(cards) && numberOfShapeMatch(cards) && patternMatch(cards) && shapeMatch(cards) {
+        if colorMatch(selectedCards) && numberOfShapeMatch(selectedCards) && patternMatch(selectedCards) && shapeMatch(selectedCards) {
             return true
         }
         return false
@@ -132,32 +151,35 @@ struct SetGame<CardShape, CardColor, CardPattern, ShapeCount> where CardShape: H
     }
     
     init(setCardContent: Array<(CardShape, CardColor, CardPattern, ShapeCount)>) {
-        allCards = []
-        deck = []
-        discardPile = []
-        visibleCards = []
-        selectedCards = []
-        matchedCards = []
+        cards = []
+//        deck = []
+//        discardPile = []
+//        dealt = []
+//        selectedCards = []
+//        matchedCards = []
         
         // Build all 81 cards and shuffle them.
         for (index, card) in setCardContent.enumerated() {
             let gameCard = Card(id: index, shape: card.0, color: card.1, pattern: card.2, numberOfShapes: card.3)
-            allCards.append(gameCard)
+            cards.append(gameCard)
         }
-        allCards.shuffle()
+        cards.shuffle()
         
         // Add all card ids to the deck
-        deck = Set(allCards.map { $0.id })
+//        deck = Set(allCards.map { $0.id })
         
         // Deal the first 12 cards
-        dealCards(12)
+//        dealCards(12)
     }
     
     struct Card: Identifiable {
         let id: Int
+        var isSelected = false
+        var isMatched = false
         let shape: CardShape
         let color: CardColor
         let pattern: CardPattern
         let numberOfShapes: ShapeCount
+        
     }
 }

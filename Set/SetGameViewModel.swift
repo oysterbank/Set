@@ -52,14 +52,17 @@ class SetGameViewModel: ObservableObject {
         self.model = SetGameViewModel.createSetGame()
     }
     
-    var visibleCards: Array<Card> {
-        let visibleCards = model.allCards.filter { model.visibleCards.contains($0.id) }
-        return visibleCards
+    var cards: Array<Card> {
+        model.cards
     }
     
-    var selectedCards: Set<Int> {
-        model.selectedCards
-    }
+//    var dealt: Set<Int> {
+//        model.dealt
+//    }
+    
+//    var selectedCards: Set<Int> {
+//        model.selectedCards
+//    }
     
     static func getCardColor(_ color: CardColor) -> Color {
         switch color {
@@ -72,17 +75,17 @@ class SetGameViewModel: ObservableObject {
         }
     }
     
-    var deckIsEmpty: Bool {
-        model.deck.isEmpty
-    }
+//    var deckIsEmpty: Bool {
+//        model.deck.isEmpty
+//    }
     
-    func cardIsSelected(cardId: Int) -> Bool {
-        model.cardIsSelected(cardId: cardId)
-    }
-    
-    func cardIsMatched(cardId: Int) -> Bool {
-        model.cardIsMatched(cardId: cardId)
-    }
+//    func cardIsSelected(cardId: Int) -> Bool {
+//        model.cardIsSelected(cardId: cardId)
+//    }
+//    
+//    func cardIsMatched(cardId: Int) -> Bool {
+//        model.cardIsMatched(cardId: cardId)
+//    }
     
     // MARK: - Intent(s)
     
@@ -94,10 +97,10 @@ class SetGameViewModel: ObservableObject {
         self.model = SetGameViewModel.createSetGame()
     }
     
-    func dealThreeCards() {
-        if model.cardsAreMatched() {
-            model.removeMatchedCards()
-        }
-        model.dealCards(3)
-    }
+//    func dealThreeCards() {
+//        if model.cardsAreMatched() {
+//            model.removeMatchedCards()
+//        }
+//        model.dealCards(3)
+//    }
 }
